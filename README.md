@@ -1,7 +1,6 @@
 # 🔐 SecureVault — Secure File Sharing System
 
-A cybersecurity-focused file sharing platform built with end-to-end
-encryption, multi-factor authentication, and real-time threat detection.
+A cybersecurity-focused file sharing platform built with end-to-end encryption, multi-factor authentication, and real-time threat detection.
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green)
@@ -31,20 +30,20 @@ encryption, multi-factor authentication, and real-time threat detection.
 
 ## 🏗️ Architecture
 
+```text
 ┌─────────────────────────────────────────────────────────┐
-│ SecureVault API │
-│ (FastAPI + Python) │
+│                     SecureVault API                     │
+│                   (FastAPI + Python)                    │
 ├──────────────┬──────────────┬──────────────┬────────────┤
-│ Auth Module │ File Module │ Audit Module │ Core Lib │
-│ JWT + MFA │ Upload/DL │ Dashboard │ Crypto │
-│ Argon2id │ AES-256-GCM │ Anomaly │ Scanner │
+│ Auth Module  │ File Module  │ Audit Module │ Core Lib   │
+│ JWT + MFA    │ Upload/DL    │ Dashboard    │ Crypto     │
+│ Argon2id     │ AES-256-GCM  │ Anomaly      │ Scanner    │
 ├──────────────┴──────────────┴──────────────┴────────────┤
-│ SQLite Database (SQLAlchemy ORM) │
+│             SQLite Database (SQLAlchemy ORM)            │
 ├─────────────────────────────────────────────────────────┤
-│ Encrypted File Storage (uploads/*.enc) │
+│             Encrypted File Storage (uploads/*.enc)      │
 └─────────────────────────────────────────────────────────┘
-
-text
+```
 
 ---
 
@@ -52,7 +51,7 @@ text
 
 ```bash
 # Clone and setup
-git clone https://github.com/yourusername/securevault.git
+git clone [https://github.com/yourusername/securevault.git](https://github.com/yourusername/securevault.git)
 cd securevault
 python3 -m venv venv
 source venv/bin/activate
@@ -75,48 +74,46 @@ Visit `http://localhost:8000/audit/dashboard` for the security dashboard.
 
 ## 🔒 Encryption Design
 
+```text
 User uploads file.pdf
-↓
+         ↓
 SHA-256 hash computed (integrity fingerprint)
-↓
+         ↓
 AES-256-GCM encryption
-Key = PBKDF2(user_id, random_salt, 600000 iterations)
-Nonce = os.urandom(12) [never reused]
-↓
+  - Key = PBKDF2(user_id, random_salt, 600000 iterations)
+  - Nonce = os.urandom(12) [never reused]
+         ↓
 Stored as: [salt(16)][nonce(12)][ciphertext+tag] → uuid.enc
-↓
+         ↓
 Original filename never touches disk
+```
 
-text
-
-On download, the GCM authentication tag is verified before
-decryption — any tampering raises `InvalidTag` and the
-download is rejected.
+On download, the GCM authentication tag is verified before decryption — any tampering raises `InvalidTag` and the download is rejected.
 
 ---
 
 ## 📁 Project Structure
 
+```text
 securevault/
 ├── app/
-│ ├── core/
-│ │ ├── crypto.py # AES-256-GCM, PBKDF2, SHA-256
-│ │ ├── security.py # JWT, Argon2id, TOTP/MFA
-│ │ ├── audit.py # Audit logging + stats
-│ │ ├── anomaly.py # Anomaly detection engine
-│ │ └── scanner.py # VirusTotal integration
-│ ├── models/ # SQLAlchemy DB models
-│ ├── routers/ # FastAPI route handlers
-│ ├── schemas/ # Pydantic validation models
-│ ├── config.py # Settings management
-│ ├── database.py # DB session handling
-│ └── main.py # App entry point
-├── uploads/ # Encrypted file storage
-├── logs/ # Audit trail
-├── .env.example # Environment template
+│   ├── core/
+│   │   ├── crypto.py      # AES-256-GCM, PBKDF2, SHA-256
+│   │   ├── security.py    # JWT, Argon2id, TOTP/MFA
+│   │   ├── audit.py       # Audit logging + stats
+│   │   ├── anomaly.py     # Anomaly detection engine
+│   │   └── scanner.py     # VirusTotal integration
+│   ├── models/            # SQLAlchemy DB models
+│   ├── routers/           # FastAPI route handlers
+│   ├── schemas/           # Pydantic validation models
+│   ├── config.py          # Settings management
+│   ├── database.py        # DB session handling
+│   └── main.py            # App entry point
+├── uploads/               # Encrypted file storage
+├── logs/                  # Audit trail
+├── .env.example           # Environment template
 └── requirements.txt
-
-text
+```
 
 ---
 
