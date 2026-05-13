@@ -1,6 +1,12 @@
 import os
 import uuid
-import magic
+
+from app.schemas import file
+try:
+    import magic
+    MAGIC_AVAILABLE = True
+except ImportError:
+    MAGIC_AVAILABLE = False
 from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
 from fastapi.responses import StreamingResponse
@@ -62,6 +68,10 @@ async def upload_file(
 
     # 2. MIME type detection (real type, not just extension)
     mime = magic.from_buffer(data, mime=True)
+    if MAGIC_AVAILABLE:
+        mime = magic.from_buffer(data, mime=True)
+    else:
+        mime = file.content_type or "application/octet-stream"
     if mime in BLOCKED_MIME:
         log_event("UPLOAD_BLOCKED_MIME", current_user.id, {"mime": mime, "filename": file.filename})
         raise HTTPException(status_code=400, detail=f"File type '{mime}' is not allowed")
